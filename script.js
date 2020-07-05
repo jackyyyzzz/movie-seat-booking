@@ -23,8 +23,8 @@ function updateSelectedCount() {
 
   sessionStorage.setItem('selectedSeats', JSON.stringify(seatsIndex));
 
-  count.innerText = selectedSeatsCount;
-  total.innerText = selectedSeatsCount * ticketPrice;
+  count.textContent = selectedSeatsCount;
+  total.textContent = selectedSeatsCount * ticketPrice;
 }
 
 // Get data from sessionStorage and populate UI
@@ -44,7 +44,7 @@ function populateUI() {
     movieSelect.selectedIndex = selectedMovieIndex;
   }
 
-  const selectedMovie = movieSelect[movieSelect.selectedIndex].innerText;
+  const selectedMovie = movieSelect[movieSelect.selectedIndex].getAttribute('data-movie-name');
   const selectedMovieOccupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovie}OccupiedSeats`));
 
   if (selectedMovieOccupiedSeats !== null) {
@@ -65,14 +65,14 @@ function populateUI() {
 // Confirm on selected seeats
 function seatsConfirmation() {
   const selectedSeats = document.querySelectorAll('.row .seat.selected');
-  const selectedMovie = movieSelect[movieSelect.selectedIndex].innerText;
+  const selectedMovie = movieSelect[movieSelect.selectedIndex].getAttribute('data-movie-name');
   const seatsIndex = [...selectedSeats].map((seat) => [...seats].indexOf(seat));
   if (selectedSeats.length <= 0) return;
 
   const seatConfirm = confirm(`\n 
-          Seat(s): ${count.innerText} \n 
+          Seat(s): ${count.textContent} \n 
           Seat number(s): ${seatsIndex == [] ? 'No seat selected' : seatsIndex} \n 
-          Price: ${total.innerText}`);
+          Price: ${total.textContent}`);
 
   if (seatConfirm) {
     selectedSeats.forEach((seat) => {
@@ -96,13 +96,13 @@ movieSelect.addEventListener('change', (e) => {
     allSeats.forEach((seat) => seat.classList.remove('occupied'));
     allSeats.forEach((seat) => seat.classList.remove('selected'));
     sessionStorage.setItem('selectedSeats', JSON.stringify([]));
-    count.innerText = 0;
-    total.innerText = 0;
+    count.textContent = 0;
+    total.textContent = 0;
   }
 
   function changeMovie() {
     resetAll();
-    const selectedMovieOccupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovie.innerText}OccupiedSeats`));
+    const selectedMovieOccupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovie.getAttribute('data-movie-name')}OccupiedSeats`));
 
     seats.forEach((seat, index) => {
       if (selectedMovieOccupiedSeats.indexOf(index) > -1) {
