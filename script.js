@@ -18,23 +18,22 @@ function setMovieData(movieIndex, moviePrice) {
 // Update total and count
 function updateSelectedCount() {
   const selectedSeats = document.querySelectorAll('.row .seat.selected');
-  const selectedSeatsCount = selectedSeats.length;
   const seatsIndex = [...selectedSeats].map((seat) => [...seats].indexOf(seat));
 
   sessionStorage.setItem('selectedSeats', JSON.stringify(seatsIndex));
 
-  count.textContent = selectedSeatsCount;
-  total.textContent = selectedSeatsCount * ticketPrice;
+  count.textContent = selectedSeats.length;
+  total.textContent = selectedSeats.length * ticketPrice;
 }
 
 // Get data from sessionStorage and populate UI
 function populateUI() {
-  const selectedSeats = JSON.parse(sessionStorage.getItem('selectedSeats'));
+  const cachedSelectedSeats = JSON.parse(sessionStorage.getItem('selectedSeats'));
   const selectedMovieIndex = sessionStorage.getItem('selectedMovieIndex');
 
-  if (selectedSeats !== null && selectedSeats.length > 0) {
+  if (cachedSelectedSeats !== null && cachedSelectedSeats.length > 0) {
     seats.forEach((seat, index) => {
-      if (selectedSeats.indexOf(index) > -1) {
+      if (cachedSelectedSeats.indexOf(index) > -1) {
         seat.classList.add('selected');
       }
     });
@@ -44,8 +43,8 @@ function populateUI() {
     movieSelect.selectedIndex = selectedMovieIndex;
   }
 
-  const selectedMovie = movieSelect[movieSelect.selectedIndex].getAttribute('data-movie-name');
-  const selectedMovieOccupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovie}OccupiedSeats`));
+  const selectedMovieName = movieSelect[movieSelect.selectedIndex].getAttribute('data-movie-name');
+  const selectedMovieOccupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovieName}OccupiedSeats`));
 
   if (selectedMovieOccupiedSeats !== null) {
     seats.forEach((seat, index) => {
@@ -65,31 +64,31 @@ function populateUI() {
 // Confirm on selected seeats
 function seatsConfirmation() {
   const selectedSeats = document.querySelectorAll('.row .seat.selected');
-  const selectedMovie = movieSelect[movieSelect.selectedIndex].getAttribute('data-movie-name');
+  const selectedMovieName = movieSelect[movieSelect.selectedIndex].getAttribute('data-movie-name');
   const seatsIndex = [...selectedSeats].map((seat) => [...seats].indexOf(seat));
   if (selectedSeats.length <= 0) return;
 
-  const seatConfirm = confirm(`\n 
-          Seat(s): ${count.textContent} \n 
-          Seat number(s): ${seatsIndex == [] ? 'No seat selected' : seatsIndex} \n 
-          Price: ${total.textContent}`);
+  const seatConfirm = confirm(`
+Seat(s): ${count.textContent}
+Seat number(s): ${seatsIndex == [] ? 'No seat selected' : seatsIndex.join(', ')}
+Price: ${total.textContent}`);
 
   if (seatConfirm) {
     selectedSeats.forEach((seat) => {
       seat.classList.remove('selected');
       seat.classList.add('occupied');
     });
-    let occupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovie}OccupiedSeats`));
+    let occupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovieName}OccupiedSeats`));
     newOccupiedSeats = occupiedSeats.concat(seatsIndex);
-    sessionStorage.setItem(`${selectedMovie}OccupiedSeats`, JSON.stringify(newOccupiedSeats));
+    sessionStorage.setItem(`${selectedMovieName}OccupiedSeats`, JSON.stringify(newOccupiedSeats));
   }
   updateSelectedCount();
 }
 
 // Movie select event
 movieSelect.addEventListener('change', (e) => {
-  let selectedSeats = document.querySelectorAll('.row .seat.selected');
-  let selectedMovie = e.target[movieSelect.selectedIndex];
+  const selectedSeats = document.querySelectorAll('.row .seat.selected');
+  const selectedMovie = e.target[movieSelect.selectedIndex];
 
   function resetAll() {
     const allSeats = document.querySelectorAll('.row .seat');
