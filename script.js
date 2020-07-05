@@ -28,12 +28,12 @@ function updateSelectedCount() {
 
 // Get data from sessionStorage and populate UI
 function populateUI() {
-  const selectedSeats = JSON.parse(sessionStorage.getItem('selectedSeats'));
+  const cachedSelectedSeats = JSON.parse(sessionStorage.getItem('selectedSeats'));
   const selectedMovieIndex = sessionStorage.getItem('selectedMovieIndex');
 
-  if (selectedSeats !== null && selectedSeats.length > 0) {
+  if (cachedSelectedSeats !== null && cachedSelectedSeats.length > 0) {
     seats.forEach((seat, index) => {
-      if (selectedSeats.indexOf(index) > -1) {
+      if (cachedSelectedSeats.indexOf(index) > -1) {
         seat.classList.add('selected');
       }
     });
@@ -43,8 +43,8 @@ function populateUI() {
     movieSelect.selectedIndex = selectedMovieIndex;
   }
 
-  const selectedMovie = movieSelect[movieSelect.selectedIndex].getAttribute('data-movie-name');
-  const selectedMovieOccupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovie}OccupiedSeats`));
+  const selectedMovieName = movieSelect[movieSelect.selectedIndex].getAttribute('data-movie-name');
+  const selectedMovieOccupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovieName}OccupiedSeats`));
 
   if (selectedMovieOccupiedSeats !== null) {
     seats.forEach((seat, index) => {
@@ -64,7 +64,7 @@ function populateUI() {
 // Confirm on selected seeats
 function seatsConfirmation() {
   const selectedSeats = document.querySelectorAll('.row .seat.selected');
-  const selectedMovie = movieSelect[movieSelect.selectedIndex].getAttribute('data-movie-name');
+  const selectedMovieName = movieSelect[movieSelect.selectedIndex].getAttribute('data-movie-name');
   const seatsIndex = [...selectedSeats].map((seat) => [...seats].indexOf(seat));
   if (selectedSeats.length <= 0) return;
 
@@ -78,9 +78,9 @@ Price: ${total.textContent}`);
       seat.classList.remove('selected');
       seat.classList.add('occupied');
     });
-    let occupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovie}OccupiedSeats`));
+    let occupiedSeats = JSON.parse(sessionStorage.getItem(`${selectedMovieName}OccupiedSeats`));
     newOccupiedSeats = occupiedSeats.concat(seatsIndex);
-    sessionStorage.setItem(`${selectedMovie}OccupiedSeats`, JSON.stringify(newOccupiedSeats));
+    sessionStorage.setItem(`${selectedMovieName}OccupiedSeats`, JSON.stringify(newOccupiedSeats));
   }
   updateSelectedCount();
 }
