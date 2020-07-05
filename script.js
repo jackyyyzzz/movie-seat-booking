@@ -69,10 +69,10 @@ function seatsConfirmation() {
   const seatsIndex = [...selectedSeats].map((seat) => [...seats].indexOf(seat));
   if (selectedSeats.length <= 0) return;
 
-  const seatConfirm = confirm(`\n 
-          Seat(s): ${count.textContent} \n 
-          Seat number(s): ${seatsIndex == [] ? 'No seat selected' : seatsIndex} \n 
-          Price: ${total.textContent}`);
+  const seatConfirm = confirm(`
+Seat(s): ${count.textContent}
+Seat number(s): ${seatsIndex == [] ? 'No seat selected' : seatsIndex.join(', ')}
+Price: ${total.textContent}`);
 
   if (seatConfirm) {
     selectedSeats.forEach((seat) => {
@@ -88,8 +88,8 @@ function seatsConfirmation() {
 
 // Movie select event
 movieSelect.addEventListener('change', (e) => {
-  let selectedSeats = document.querySelectorAll('.row .seat.selected');
-  let selectedMovie = e.target[movieSelect.selectedIndex];
+  const selectedSeats = document.querySelectorAll('.row .seat.selected');
+  const selectedMovie = e.target[movieSelect.selectedIndex];
 
   function resetAll() {
     const allSeats = document.querySelectorAll('.row .seat');
